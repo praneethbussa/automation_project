@@ -55,3 +55,35 @@ then
 aws s3 cp /tmp/${name}-httpd-logs-${timestamp}.tar s3://${s3_bucket}/${name}-httpd-logs-${timestamp}.tar
 
 fi
+
+sudo apt update
+sudo apt install awscli
+
+file_path="/var/www/html"
+
+
+if [ ! -f ${file_path}/inventory.html ];
+
+then
+    echo -e 'LogType\t\tTimeCreated\t\tType\t\tSize' >> ${file_path}/inventory.html
+
+fi
+
+
+if [ -f ${file_path}/inventory.html ]
+
+then
+    tar_size=$(du -h /tmp/* | tail -1 | awk '{print $1}')
+    echo -e "httpd-log\t\t${timestamp}\t\ttar\t\t${tar_size}" >> ${file_path}/inventory.html
+
+fi
+
+
+if [ ! -f /etc/crond.d/automation ];
+
+then
+
+    echo "* * * * * root /root/Automation_Project/automation.sh" >> /etc/cron.d/automation
+
+fi
+
